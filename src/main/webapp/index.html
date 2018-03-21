@@ -1,0 +1,57 @@
+<html>
+    <head>
+        <script href="index.js"></script>
+    </head>
+    <body>
+        <h1 id="header"></h1>
+        Upload Image:: <input id="image" type="file" name="images" accept="image/*" />
+        <button name="uplaod" onclick="uploadImage()">Upload</button>
+
+        <input id="imageToDisplay" type="image" name="s3image" src="" />
+    </body>
+    <script>
+
+        (function() {
+             var xhttp = new XMLHttpRequest();
+              xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                  document.getElementById("header").innerHTML = this.responseText;
+                }
+              };
+              xhttp.open("GET", "/hi", true);
+              xhttp.send();
+        })()
+
+        function uploadImage() {
+            var fileArray = document.getElementById("image")['files'] || [];
+            if (fileArray == null || fileArray.length < 0) {
+                retrun;
+            }
+            var fileInput = document.getElementById("image")['files'][0];
+            var reader = new FileReader();
+            reader['file'] = fileInput;
+            reader.onload = (e) => {
+                var base64 = reader.result.split('base64,')[1];
+                postUpload(reader['file'].name, reader['file'].name.split('.').pop().toLowerCase(), base64);
+            }
+            reader.readAsDataURL(fileInput);
+        }
+
+        function postUpload(fileName, fileExt, base64) {
+             var http = new XMLHttpRequest();
+             http.open("POST", "/upload/"+fileName+"/"+fileExt, true);
+
+            //Send the proper header information along with the request
+            //http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+
+            http.onreadystatechange = function() {//Call a function when the state changes.
+                if(http.readyState == 4 && http.status == 200) {
+                    alert(http.responseText);
+                    document.getElementById("imageToDisplay").src = http.responseText;
+                    document.getElementById("image").value = '';
+                }
+            }
+            http.send(base64);
+        }
+    </script>
+</html>

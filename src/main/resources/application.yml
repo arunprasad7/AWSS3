@@ -1,0 +1,10 @@
+server:
+  port: 5000
+
+application:
+  cmms:
+    aws:
+      access_key_id: AKIAJ2CKNRNZA3SNQJOQ
+      secret_access_key: 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
+      bucket: cmms-image
+      region: ap-south-1
